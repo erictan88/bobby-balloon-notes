@@ -2,7 +2,7 @@ namespace SpriteKind {
     export const Boss_kind = SpriteKind.create()
 }
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    Hero.ay += -50
+    Hero.vy += -100
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     projectile = sprites.createProjectileFromSprite(img`
@@ -30,12 +30,6 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     Directions = 1
-})
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
-    if (sprites.readDataBoolean(projectile, "1")) {
-        otherSprite.destroy(effects.ashes, 100)
-        info.changeLifeBy(-1)
-    }
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     otherSprite.destroy(effects.rings, 100)
@@ -208,6 +202,7 @@ Hero = sprites.create(img`
 Hero.setStayInScreen(true)
 info.setLife(3)
 Directions = 1
+Hero.setFlag(SpriteFlag.ShowPhysics, true)
 game.onUpdateInterval(5000, function () {
     Ghost = sprites.create(img`
         ........................
@@ -379,13 +374,6 @@ game.onUpdateInterval(3400, function () {
     500,
     true
     )
-})
-game.onUpdateInterval(1000, function () {
-    Hero.ay = 30
-    if (Hero.y > 100) {
-        info.changeLifeBy(-1)
-        Hero.y += 32
-    }
 })
 game.onUpdateInterval(100, function () {
     if (info.life() == 3 && Directions == 1) {
@@ -603,5 +591,15 @@ game.onUpdateInterval(100, function () {
             ......fff.......
             ................
             `)
+    }
+})
+game.onUpdateInterval(200, function () {
+    Hero.ay = 50
+    if (Hero.y > 100) {
+        info.changeLifeBy(0)
+        Hero.vy += -100
+    }
+    if (Hero.y < 20) {
+        Hero.vy = 10
     }
 })
